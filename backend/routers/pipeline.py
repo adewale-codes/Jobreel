@@ -6,7 +6,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import get_db
-from services.pipeline import run_pipeline
+from services.pipeline import backfill_skills, run_pipeline
 
 router = APIRouter(prefix="/api/pipeline", tags=["pipeline"])
 
@@ -36,6 +36,11 @@ async def status(db: AsyncSession = Depends(get_db)):
         """)
     )
     return [dict(row) for row in result.mappings().all()]
+
+
+@router.post("/backfill")
+async def backfill(db: AsyncSession = Depends(get_db)):
+    return await backfill_skills(db)
 
 
 @router.get("/runs/{run_id}")

@@ -7,6 +7,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from services.adzuna import fetch_jobs
+from services.skill_extractor import extract_skills
 
 log = logging.getLogger(__name__)
 
@@ -83,7 +84,46 @@ async def insert_job(db: AsyncSession, job_data: dict) -> str:
             "raw_data": json.dumps(job_data),
         },
     )
-    return str(result.scalar())
+    job_id = str(result.scalar())
+
+    skills = extract_skills(job_data.get("description", ""))
+    for skill in skills:
+        await db.execute(
+            text("INSERT INTO skills (job_id, skill) VALUES (:job_id, :skill)"),
+            {"job_id": job_id, "skill": skill},
+        )
+
+    return job_id
+
+
+async def backfill_skills(db: AsyncSession) -> dict:
+    result = await db.execute(
+        text("""
+            SELECT j.id, j.description
+            FROM jobs j
+            WHERE NOT EXISTS (
+                SELECT 1 FROM skills s WHERE s.job_id = j.id
+            )
+        """)
+    )
+    rows = result.mappings().all()
+
+    jobs_processed = 0
+    skills_inserted = 0
+
+    for row in rows:
+        skills = extract_skills(row["description"] or "")
+        for skill in skills:
+            await db.execute(
+                text("INSERT INTO skills (job_id, skill) VALUES (:job_id, :skill)"),
+                {"job_id": str(row["id"]), "skill": skill},
+            )
+            skills_inserted += 1
+        await db.commit()
+        jobs_processed += 1
+
+    log.info("Backfill complete — jobs_processed=%d skills_inserted=%d", jobs_processed, skills_inserted)
+    return {"jobs_processed": jobs_processed, "skills_inserted": skills_inserted}
 
 
 async def run_pipeline(
