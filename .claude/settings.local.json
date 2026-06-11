@@ -4,7 +4,9 @@
       "PowerShell(Get-ChildItem -Recurse \"c:\\\\Users\\\\adewa\\\\OneDrive\\\\Documents\\\\Jobreel\" | Where-Object { !$_.PSIsContainer } | Select-Object -ExpandProperty FullName | Sort-Object)",
       "Bash(npm install *)",
       "Bash(npm audit *)",
-      "PowerShell(Get-ChildItem -Recurse \"c:\\\\Users\\\\adewa\\\\OneDrive\\\\Documents\\\\Jobreel\\\\backend\" | Where-Object { !$_.PSIsContainer } | Select-Object -ExpandProperty FullName)"
+      "PowerShell(Get-ChildItem -Recurse \"c:\\\\Users\\\\adewa\\\\OneDrive\\\\Documents\\\\Jobreel\\\\backend\" | Where-Object { !$_.PSIsContainer } | Select-Object -ExpandProperty FullName)",
+      "Bash(npx tsc *)",
+      "Bash(npm run *)"
     ]
   }
 }
