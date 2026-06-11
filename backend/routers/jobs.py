@@ -28,14 +28,16 @@ async def list_jobs(
     filters = []
     params: dict = {}
 
+    like_op = "ILIKE" if db.bind.dialect.name == "postgresql" else "LIKE"
+
     if search:
-        filters.append("title ILIKE :search")
+        filters.append(f"title {like_op} :search")
         params["search"] = f"%{search}%"
     if category:
         filters.append("category = :category")
         params["category"] = category
     if location:
-        filters.append("location ILIKE :location")
+        filters.append(f"location {like_op} :location")
         params["location"] = f"%{location}%"
 
     where_clause = f"WHERE {' AND '.join(filters)}" if filters else ""

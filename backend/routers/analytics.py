@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 from fastapi import APIRouter, Depends, Query
@@ -165,30 +166,31 @@ async def volume_over_time(
     db: AsyncSession = Depends(get_db),
 ):
     days = int(days)
+    cutoff = datetime.now(timezone.utc) - timedelta(days=days)
 
     if category:
-        query = text(f"""
+        query = text("""
             SELECT
                 DATE(created) as date,
                 COUNT(*) as count
             FROM jobs
-            WHERE created >= NOW() - INTERVAL '{days} days'
+            WHERE created >= :cutoff
             AND category = :category
             GROUP BY DATE(created)
             ORDER BY date ASC
         """)
-        params = {"category": category}
+        params = {"cutoff": cutoff, "category": category}
     else:
-        query = text(f"""
+        query = text("""
             SELECT
                 DATE(created) as date,
                 COUNT(*) as count
             FROM jobs
-            WHERE created >= NOW() - INTERVAL '{days} days'
+            WHERE created >= :cutoff
             GROUP BY DATE(created)
             ORDER BY date ASC
         """)
-        params = {}
+        params = {"cutoff": cutoff}
 
     result = await db.execute(query, params)
     rows = result.mappings().all()

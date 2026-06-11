@@ -11,7 +11,10 @@ migrate:
 	docker compose exec api alembic upgrade head
 
 test:
-	docker compose exec api pytest
+	docker compose exec api pytest tests/ -v
+
+backfill:
+	curl -X POST http://localhost:8000/api/pipeline/backfill
 
 logs:
 	docker compose logs -f

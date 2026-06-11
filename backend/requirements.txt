@@ -8,3 +8,6 @@ python-dotenv
 pydantic-settings
 httpx
 spacy
+pytest
+pytest-asyncio
+aiosqlite

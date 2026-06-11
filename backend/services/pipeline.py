@@ -174,7 +174,7 @@ async def run_pipeline(
             text("""
                 UPDATE pipeline_runs
                 SET status      = 'completed',
-                    completed_at = now(),
+                    completed_at = CURRENT_TIMESTAMP,
                     jobs_fetched = :fetched,
                     jobs_inserted = :inserted,
                     jobs_skipped  = :skipped

@@ -6,7 +6,14 @@
       "Bash(npm audit *)",
       "PowerShell(Get-ChildItem -Recurse \"c:\\\\Users\\\\adewa\\\\OneDrive\\\\Documents\\\\Jobreel\\\\backend\" | Where-Object { !$_.PSIsContainer } | Select-Object -ExpandProperty FullName)",
       "Bash(npx tsc *)",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(python -c ' *)",
+      "Bash(python -c \"import pytest, pytest_asyncio, aiosqlite, httpx; print\\('ok'\\)\")",
+      "Bash(pip install *)",
+      "Bash(python -c \"import aiosqlite; print\\('ok'\\)\")",
+      "Bash(python -m pytest tests/ -v)",
+      "Bash(python -m spacy download en_core_web_sm)",
+      "Bash(python -m venv .venv)"
     ]
   }
 }
